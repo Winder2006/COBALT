@@ -1,0 +1,196 @@
+I’m building an internal web app called “AI Due Diligence” for a commercial real estate environmental team.
+
+Stack:
+
+Python 3
+
+Flask as a minimal web server
+
+requests for HTTP
+
+beautifulsoup4 for HTML parsing
+
+openai Python SDK for calling GPT-5.1 (I’ll add the API key as an env var named OPENAI_API_KEY).
+
+Requirements:
+
+Project structure
+
+main.py – Flask app entry point.
+
+brrts_client.py – functions to work with Wisconsin DNR BRRTS.
+
+risk_analysis.py – functions that call OpenAI and create red-flag summaries.
+
+templates/index.html – simple UI for entering a BRRTS number and viewing results.
+
+static/main.js – front-end JS to call the backend endpoints.
+
+requirements.txt – include flask, requests, beautifulsoup4, and openai.
+
+BRRTS client (brrts_client.py)
+
+Provide a function extract_dsn(brtts_string: str) -> str that:
+
+Accepts strings like "02-68-585621" (from Excel) OR just "585621".
+
+Returns the last 6 digits only as a string. Raise a clear ValueError if no 6-digit sequence is found.
+
+Provide a function fetch_activity_html(dsn: str) -> str that:
+
+Builds URL https://apps.dnr.wi.gov/rrbotw/botw-activity-detail?dsn=<dsn>.
+
+Uses requests with a reasonable timeout and a simple User-Agent.
+
+On non-200 response, raises an exception with a clear error message.
+
+Provide a function parse_activity_page(html: str) -> dict that:
+
+Uses BeautifulSoup to parse the HTML.
+
+Returns a Python dict with at least these keys:
+
+activity_number (e.g., "02-38-583856 JCI/TYCO (BIOSOLIDS)")
+
+status
+
+activity_type
+
+jurisdiction
+
+dnr_region
+
+county
+
+location_name
+
+address
+
+municipality
+
+start_date
+
+end_date
+
+characteristics – list of checked/true characteristics if possible (PFAS, Sediments, ROW Impact, Underground Petrol Tank, etc.).
+
+substances – list of substances (each can be a dict with fields like name, comments, type).
+
+If you can’t reliably find a field on the page, set its value to None and don’t crash.
+
+Risk analysis (risk_analysis.py)
+
+Provide a function build_risk_facts(activity: dict) -> dict that:
+
+Reads the parsed BRRTS data and produces a simpler dictionary with a few obvious “flags”, for example:
+
+has_pfas – True/False based on substances or characteristics.
+
+status_flag – e.g. "OPEN", "CLOSED", etc.
+
+offsite_impact_flag – True/False if characteristics mention impact to other properties/right-of-way.
+
+We’ll expand this later, but set up the structure now.
+
+Provide a function summarize_red_flags(activity: dict, risk_facts: dict) -> str that:
+
+Uses the OpenAI client to call GPT-5.1 (use the Responses API or the current recommended API).
+
+System prompt example: “You are an environmental due diligence analyst helping a real estate developer understand environmental risk for a specific Wisconsin property from BRRTS data.”
+
+Include the structured activity and risk_facts data in the prompt in a JSON-like format.
+
+Ask the model to return a short, structured summary of:
+
+Key contaminants / substances of concern.
+
+Status and whether additional investigation/monitoring may be needed.
+
+Any obvious “red flags” a developer should pay attention to.
+
+Return the summary text only.
+
+For now, handle errors from the OpenAI API gracefully and return a simple fallback message if something fails.
+
+Flask app (main.py)
+
+Configure Flask app with:
+
+GET / – renders index.html.
+
+POST /api/analyze – accepts JSON body like {"brtts": "02-68-585621"} or {"brtts": "585621"}:
+
+Call extract_dsn.
+
+Call fetch_activity_html.
+
+Call parse_activity_page.
+
+Call build_risk_facts.
+
+Call summarize_red_flags.
+
+Return JSON like:
+
+{
+  "dsn": "585621",
+  "activity": { ...parsed activity... },
+  "risk_facts": { ... },
+  "summary": "human readable red-flag summary from GPT"
+}
+
+
+On errors (bad DSN, request failure, parse issues, etc.), return a JSON error with a helpful message and 400/500 status codes.
+
+POST /api/chat – accepts JSON body like:
+
+{
+  "brtts": "585621",
+  "activity": { ...optional cached activity dict... },
+  "risk_facts": { ...optional cached risk facts... },
+  "history": [ { "role": "user", "content": "..." }, ... ],
+  "message": "user’s new question"
+}
+
+
+If activity and risk_facts are provided, reuse them.
+
+Otherwise, run the same pipeline as /api/analyze to fetch and parse them.
+
+Call GPT-5.1 again with a system prompt like: “You are an environmental due diligence analyst. Use the BRRTS data and risk facts below to answer questions. If you don’t know, be honest.”
+
+Append the new user message to the history and return the assistant’s reply and updated history.
+
+Frontend (templates/index.html and static/main.js)
+
+Very simple layout:
+
+Text input for BRRTS number (label: “BRRTS activity ID or last 6 digits”).
+
+“Analyze Site” button that calls /api/analyze via fetch.
+
+A results area that shows:
+
+The DSN & basic property info (activity number, location, status).
+
+The AI-generated red-flag summary.
+
+A simple chat section:
+
+Textarea for questions.
+
+“Ask AI” button that calls /api/chat.
+
+A chat transcript area showing user/assistant messages.
+
+Handle errors by showing a readable message in the UI (e.g., “Could not find this DSN”, “Network error”, etc.).
+
+General
+
+Add comments in all files explaining what each function does.
+
+Make sure the app runs with python main.py.
+
+Don’t hard-code my API key; read it from OPENAI_API_KEY in the environment.
+
+Please generate all the files with working starter code that I can run immediately. Use clear, simple Python and keep the HTML/JS minimal but functional.

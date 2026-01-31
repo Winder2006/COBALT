@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Due Diligence | Cobalt Partners</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #111827;
+      background-color: #f3f4f6;
+      --cobalt-green: #7cb342;
+      --cobalt-dark: #0a0a0a;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f3f4f6;
+    }
+    .top-bar {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .top-bar-logo {
+      display: inline-block;
+      text-decoration: none;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      transform: scaleY(1.2);
+    }
+    .top-bar-logo .logo-a {
+      color: #7cb342;
+    }
+    .top-bar-title {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+    .top-bar-home {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #4b5563;
+      border-radius: 0.5rem;
+      transition: all 0.2s;
+    }
+    .top-bar-home:hover {
+      color: #ffffff;
+      border-color: #7cb342;
+      background: rgba(124, 179, 66, 0.1);
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem 3rem;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #111827;
+    }
+    header p {
+      margin: 0.5rem 0 0;
+      color: #4b5563;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 1rem;
+      padding: 1.5rem 1.75rem;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      margin-bottom: 1.5rem;
+    }
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      color: #111827;
+    }
+    #site-form {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    #site-input {
+      flex: 1 1 260px;
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+      font-size: 0.95rem;
+    }
+    .btn-primary {
+      border: none;
+      border-radius: 0.5rem;
+      background: linear-gradient(135deg, #7cb342 0%, #8bc34a 100%);
+      color: #0a0a0a;
+      font-weight: 600;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #8bc34a 0%, #9ccc65 100%);
+      box-shadow: 0 2px 8px rgba(124, 179, 66, 0.3);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+    .btn-secondary {
+      border: none;
+      border-radius: 0.5rem;
+      background: #6b7280;
+      color: white;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn-secondary:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+    #error-banner {
+      margin-top: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.5rem;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .site-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+    }
+    .site-field label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 0.25rem;
+      letter-spacing: 0.03em;
+    }
+    .site-field div {
+      color: #111827;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .badge.highlight {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .badge.good {
+      background: #dcfce7;
+      color: #166534;
+    }
+    #summary-content {
+      white-space: pre-wrap;
+      font-size: 0.93rem;
+      color: #111827;
+    }
+    .doc-list {
+      max-height: 350px;
+      overflow-y: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      background: #f9fafb;
+    }
+    .doc-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .doc-item:last-child {
+      border-bottom: none;
+    }
+    .doc-item input[type="checkbox"] {
+      margin-top: 0.25rem;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .doc-info {
+      flex: 1;
+      font-size: 0.9rem;
+    }
+    .doc-info .doc-name {
+      font-weight: 500;
+      color: #111827;
+      margin-bottom: 0.25rem;
+    }
+    .doc-info .doc-meta {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .doc-info .doc-link {
+      font-size: 0.8rem;
+      color: #2563eb;
+      text-decoration: none;
+    }
+    .doc-info .doc-link:hover {
+      text-decoration: underline;
+    }
+    .doc-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .doc-count {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+    .selected-count {
+      font-size: 0.85rem;
+      color: #2563eb;
+      font-weight: 500;
+    }
+    .empty-docs {
+      padding: 2rem;
+      text-align: center;
+      color: #9ca3af;
+      font-style: italic;
+    }
+    .chat-messages {
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      padding: 0.75rem;
+      max-height: 300px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+    .chat-msg {
+      margin-bottom: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+    }
+    .chat-msg.user {
+      background: #dbeafe;
+      color: #1d4ed8;
+      margin-left: 2rem;
+    }
+    .chat-msg.ai {
+      background: white;
+      color: #111827;
+      margin-right: 2rem;
+      border: 1px solid #e5e7eb;
+    }
+    .empty-chat {
+      color: #9ca3af;
+      font-style: italic;
+      text-align: center;
+      padding: 1rem;
+    }
+    .chat-input-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    #chat-input {
+      flex: 1 1 260px;
+      min-height: 60px;
+      border-radius: 0.75rem;
+      border: 1px solid #d1d5db;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      resize: vertical;
+    }
+    #chat-btn {
+      border: none;
+      border-radius: 0.75rem;
+      padding: 0.6rem 1.2rem;
+      background: linear-gradient(135deg, #7cb342 0%, #8bc34a 100%);
+      color: #0a0a0a;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #chat-btn:hover {
+      background: linear-gradient(135deg, #8bc34a 0%, #9ccc65 100%);
+      box-shadow: 0 2px 8px rgba(124, 179, 66, 0.3);
+    }
+    #chat-btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e5e7eb;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 0.5rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <a href="/" class="top-bar-logo">
+      COB<span class="logo-a">A</span>LT
+    </a>
+    <span class="top-bar-title">AI Due Diligence Platform</span>
+    <a href="/" class="top-bar-home">← Home</a>
+  </div>
+  
+  <div class="page">
+    <header>
+      <h1>Environmental Risk Analysis</h1>
+      <p>Wisconsin BRRTS Site Assessment</p>
+    </header>
+
+    <section class="card">
+      <h2>Site Analysis</h2>
+      <form id="site-form">
+        <input
+          id="site-input"
+          type="text"
+          placeholder="Enter BRRTS activity ID (e.g., 02-68-585621 or 585621)"
+          value="588459"
+        />
+        <button id="analyze-btn" type="submit" class="btn-primary">Analyze Site</button>
+      </form>
+      <div id="error-banner"></div>
+    </section>
+
+    <section class="card">
+      <h2>Site Information</h2>
+      <div class="site-grid">
+        <div class="site-field">
+          <label>DSN</label>
+          <div id="site-dsn">-</div>
+        </div>
+        <div class="site-field">
+          <label>Activity Number</label>
+          <div id="site-activity-number">-</div>
+        </div>
+        <div class="site-field">
+          <label>Status</label>
+          <div id="site-status">-</div>
+        </div>
+        <div class="site-field">
+          <label>Activity Type</label>
+          <div id="site-activity-type">-</div>
+        </div>
+        <div class="site-field">
+          <label>Location Name</label>
+          <div id="site-location-name">-</div>
+        </div>
+        <div class="site-field">
+          <label>Address</label>
+          <div id="site-address">-</div>
+        </div>
+        <div class="site-field">
+          <label>Municipality</label>
+          <div id="site-municipality">-</div>
+        </div>
+        <div class="site-field">
+          <label>County</label>
+          <div id="site-county">-</div>
+        </div>
+        <div class="site-field">
+          <label>DNR Region</label>
+          <div id="site-region">-</div>
+        </div>
+        <div class="site-field">
+          <label>Start Date</label>
+          <div id="site-start-date">-</div>
+        </div>
+        <div class="site-field">
+          <label>End Date</label>
+          <div id="site-end-date">-</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Risk Indicators</h2>
+      <div class="badges">
+        <span id="risk-status" class="badge">Status: UNKNOWN</span>
+        <span id="risk-pfas" class="badge">PFAS</span>
+        <span id="risk-petroleum" class="badge">Petroleum</span>
+        <span id="risk-metals" class="badge">Heavy Metals</span>
+        <span id="risk-offsite" class="badge">Off-site Impact</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Risk Summary</h2>
+      <div id="summary-content">
+        Run an analysis to see a structured risk summary for this BRRTS site.
+      </div>
+    </section>
+
+    <section class="card" id="documents-section">
+      <h2>Property Documents</h2>
+      <div class="doc-controls">
+        <button id="auto-analyze-btn" class="btn-primary">Auto-Analyze All Documents</button>
+        <button id="fetch-docs-btn" class="btn-secondary">Fetch Documents</button>
+        <button id="extract-text-btn" class="btn-primary" style="display:none;">Extract Text from Selected</button>
+        <button id="select-all-btn" class="btn-secondary" style="display:none;">Select All</button>
+        <span class="doc-count" id="doc-count"></span>
+        <span class="selected-count" id="selected-count"></span>
+      </div>
+      <div id="extraction-status" style="display:none; margin-bottom: 0.75rem; padding: 0.75rem; background: #dbeafe; border-radius: 0.5rem; font-size: 0.9rem;">
+        <span id="extraction-status-text"></span>
+      </div>
+      <div id="doc-list" class="doc-list">
+        <div class="empty-docs">
+          Click "Fetch Documents" after analyzing a site to load available documents.
+        </div>
+      </div>
+      <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+        <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.5rem;">
+          If documents aren't found automatically, add manually using the docSeqNo from the DNR page (found in the download link):
+        </p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <input type="text" id="manual-doc-seq" placeholder="Enter docSeqNo (e.g., 194301)" 
+                 style="flex: 1; min-width: 200px; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.9rem;">
+          <button id="add-doc-btn" class="btn-secondary">Add Document</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card hidden" id="extracted-content-section">
+      <h2>Document Findings</h2>
+      <div id="doc-risk-badges" class="badges" style="margin-bottom: 1rem;"></div>
+      <div id="extracted-summary" style="font-size: 0.9rem; margin-bottom: 1rem;"></div>
+      <details>
+        <summary style="cursor: pointer; font-weight: 500; margin-bottom: 0.5rem;">View Extracted Text</summary>
+        <div id="extracted-text-content" style="max-height: 400px; overflow-y: auto; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; font-size: 0.85rem; white-space: pre-wrap; font-family: monospace;"></div>
+      </details>
+    </section>
+
+    <section class="card hidden" id="ai-summary-section">
+      <h2>AI Document Summary</h2>
+      <div id="ai-summary-status" style="display:none; margin-bottom: 0.75rem; padding: 0.75rem; background: #dbeafe; border-radius: 0.5rem; font-size: 0.9rem;">
+        <span id="ai-summary-status-text"></span>
+      </div>
+      <div id="ai-summary-content" style="white-space: pre-wrap; font-size: 0.93rem; color: #111827; line-height: 1.6;"></div>
+    </section>
+
+    <section class="card" id="chat-section">
+      <h2>Ask Questions About Selected Documents</h2>
+      <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 1rem;">
+        Select documents above, then ask questions. The AI will analyze them in context.
+      </p>
+      <div class="chat-messages" id="chat-messages">
+        <div class="empty-chat">
+          Select documents and ask a question about the environmental data for this site.
+        </div>
+      </div>
+      <div class="chat-input-group">
+        <textarea
+          id="chat-input"
+          placeholder="Ask a question about the selected documents..."
+        ></textarea>
+        <button id="chat-btn" type="button">Ask AI</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>

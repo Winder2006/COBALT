@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cobalt Partners | AI Due Diligence</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0a0a0a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Background paths container */
+    .background-paths {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.4;
+    }
+    
+    .background-paths svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .container {
+      text-align: center;
+      z-index: 10;
+      padding: 2rem;
+      position: relative;
+      background: transparent;
+    }
+    
+    .logo-container {
+      margin-bottom: 1rem;
+    }
+    
+    .logo {
+      font-size: 5.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      transform: scaleY(1.2);
+      text-shadow: 0 0 60px rgba(124, 179, 66, 0.4);
+    }
+    
+    .logo-a {
+      color: #7cb342;
+    }
+    
+    .tagline {
+      font-size: 1.1rem;
+      letter-spacing: 0.5em;
+      color: #9ca3af;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+    
+    .divider {
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #7cb342, transparent);
+      margin: 2.5rem auto;
+    }
+    
+    .app-title {
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: #e5e7eb;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    
+    .app-subtitle {
+      font-size: 1rem;
+      color: #6b7280;
+      max-width: 500px;
+      margin: 0 auto 3rem;
+      line-height: 1.6;
+    }
+    
+    .start-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 3rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #0a0a0a;
+      background: linear-gradient(135deg, #7cb342 0%, #9ccc65 100%);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(124, 179, 66, 0.3);
+    }
+    
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(124, 179, 66, 0.5);
+      background: linear-gradient(135deg, #8bc34a 0%, #aed581 100%);
+    }
+    
+    .start-btn:active {
+      transform: translateY(0);
+    }
+    
+    .start-btn svg {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s ease;
+    }
+    
+    .start-btn:hover svg {
+      transform: translateX(4px);
+    }
+    
+    .features {
+      display: flex;
+      gap: 3rem;
+      margin-top: 4rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .feature {
+      text-align: center;
+      max-width: 180px;
+    }
+    
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 1rem;
+      color: #7cb342;
+    }
+    
+    .feature-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e5e7eb;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .feature-desc {
+      font-size: 0.8rem;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+    
+    .footer {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.8rem;
+      color: #4b5563;
+      z-index: 10;
+    }
+    
+    @media (max-width: 600px) {
+      .logo {
+        font-size: 3rem;
+      }
+      
+      .tagline {
+        font-size: 0.8rem;
+        letter-spacing: 0.3em;
+      }
+      
+      .features {
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background Paths -->
+  <div class="background-paths">
+    <svg viewBox="0 0 696 316" preserveAspectRatio="xMidYMid slice" id="bg-svg"></svg>
+  </div>
+
+  <div class="container">
+    <div class="logo-container">
+      <div class="logo">COB<span class="logo-a">A</span>LT</div>
+      <div class="tagline">Partners</div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <h1 class="app-title">AI Due Diligence</h1>
+    <p class="app-subtitle">
+      Automated environmental risk analysis for Wisconsin BRRTS sites. 
+      Extract insights from DNR documents in seconds.
+    </p>
+    
+    <a href="/app" class="start-btn">
+      Start Analysis
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+      </svg>
+    </a>
+    
+    <div class="features">
+      <div class="feature">
+        <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+        <div class="feature-title">Document Extraction</div>
+        <div class="feature-desc">Auto-download and parse DNR site files and reports</div>
+      </div>
+      
+      <div class="feature">
+        <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19 14.5M14.25 3.104c.251.023.501.05.75.082M19 14.5l-4.5 4.5m0 0l-4.5-4.5m4.5 4.5V3.104" />
+        </svg>
+        <div class="feature-title">Risk Analysis</div>
+        <div class="feature-desc">Identify PFAS, petroleum, metals, and other contamination</div>
+      </div>
+      
+      <div class="feature">
+        <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.5 19.5h-6" />
+        </svg>
+        <div class="feature-title">AI Summaries</div>
+        <div class="feature-desc">Get instant due diligence reports powered by AI</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    &copy; 2026 Cobalt Partners. Environmental Due Diligence Platform.
+  </div>
+
+  <script>
+    const svg = document.getElementById('bg-svg');
+    const ns = 'http://www.w3.org/2000/svg';
+    
+    // Generate paths for both directions
+    function createPaths(position) {
+      const group = document.createElementNS(ns, 'g');
+      
+      for (let i = 0; i < 36; i++) {
+        const d = `M${-(380 - i * 5 * position)} ${-(189 + i * 6)}C${-(380 - i * 5 * position)} ${-(189 + i * 6)} ${-(312 - i * 5 * position)} ${216 - i * 6} ${152 - i * 5 * position} ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${684 - i * 5 * position} ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`;
+        
+        const path = document.createElementNS(ns, 'path');
+        path.setAttribute('d', d);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', '#7cb342');
+        path.setAttribute('stroke-width', 0.5 + i * 0.03);
+        path.setAttribute('stroke-opacity', 0.1 + i * 0.03);
+        path.setAttribute('stroke-linecap', 'round');
+        
+        // Get path length for animation
+        group.appendChild(path);
+      }
+      
+      return group;
+    }
+    
+    // Add both path groups
+    svg.appendChild(createPaths(1));
+    svg.appendChild(createPaths(-1));
+    
+    // Animate paths with JavaScript
+    const allPaths = svg.querySelectorAll('path');
+    
+    allPaths.forEach((path, index) => {
+      const length = path.getTotalLength();
+      path.style.strokeDasharray = length;
+      path.style.strokeDashoffset = length;
+      
+      // Random duration between 20-30s
+      const duration = 20000 + Math.random() * 10000;
+      const delay = index * 50;
+      
+      function animate() {
+        const startTime = performance.now() + delay;
+        
+        function step(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = (elapsed % duration) / duration;
+          
+          // Animate dashoffset from length to 0 and back
+          const offset = length * (1 - progress * 2);
+          path.style.strokeDashoffset = Math.abs(offset);
+          
+          // Pulse opacity
+          const opacity = 0.3 + 0.3 * Math.sin(progress * Math.PI * 2);
+          path.style.strokeOpacity = (0.1 + index * 0.01) * opacity * 5;
+          
+          requestAnimationFrame(step);
+        }
+        
+        requestAnimationFrame(step);
+      }
+      
+      animate();
+    });
+  </script>
+</body>
+</html>
