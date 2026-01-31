@@ -38,5 +38,5 @@ COPY . .
 # Environment - browsers already installed
 ENV PYTHONUNBUFFERED=1
 
-# Start
-CMD ["python", "main.py"]
+# Start with error handling
+CMD ["python", "-u", "run.py"]
