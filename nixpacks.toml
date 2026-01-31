@@ -1,0 +1,29 @@
+# Nixpacks configuration for Railway
+# This ensures system dependencies for Playwright are installed
+
+[phases.setup]
+nixPkgs = [
+  "python311",
+  "chromium",
+  "libnss3",
+  "libatk1.0-0",
+  "libatk-bridge2.0-0",
+  "libcups2",
+  "libdrm2",
+  "libxkbcommon0",
+  "libxcomposite1",
+  "libxdamage1",
+  "libxfixes3",
+  "libxrandr2",
+  "libgbm1",
+  "libasound2"
+]
+
+[phases.install]
+cmds = [
+  "pip install -r requirements.txt",
+  "python -m playwright install chromium"
+]
+
+[start]
+cmd = "python main.py"

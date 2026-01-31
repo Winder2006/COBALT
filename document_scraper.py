@@ -26,18 +26,26 @@ def extract_site_and_documents(dsn: str) -> dict:
         Dictionary with 'site_info', 'risk_flags', 'documents', and 'summary'
     """
     
-    # Try Playwright first (works locally)
+    # Try Playwright first (works locally and on Railway/Render)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     scraper_path = os.path.join(script_dir, "playwright_scraper.py")
     
+    print(f"[document_scraper] Looking for Playwright scraper at: {scraper_path}")
+    print(f"[document_scraper] Scraper exists: {os.path.exists(scraper_path)}")
+    
     if os.path.exists(scraper_path):
         try:
+            print(f"[document_scraper] Running Playwright scraper for DSN: {dsn}")
             result = subprocess.run(
                 [sys.executable, scraper_path, dsn],
                 capture_output=True,
                 text=True,
-                timeout=90
+                timeout=120  # Increased timeout for cloud
             )
+            
+            print(f"[document_scraper] Playwright return code: {result.returncode}")
+            if result.stderr:
+                print(f"[document_scraper] Playwright stderr: {result.stderr[:500]}")
             
             if result.returncode == 0 and result.stdout.strip():
                 data = json.loads(result.stdout)
@@ -47,6 +55,8 @@ def extract_site_and_documents(dsn: str) -> dict:
                     documents = data.get("documents", [])
                     summary = generate_summary(site_info, risk_flags, len(documents))
                     
+                    print(f"[document_scraper] Playwright success! Got {len(documents)} documents")
+                    
                     return {
                         "site_info": site_info,
                         "risk_flags": risk_flags,
@@ -54,8 +64,18 @@ def extract_site_and_documents(dsn: str) -> dict:
                         "summary": summary,
                         "error": None
                     }
+                else:
+                    print(f"[document_scraper] Playwright returned error: {data.get('error')}")
+            else:
+                print(f"[document_scraper] Playwright failed. stdout: {result.stdout[:200] if result.stdout else 'empty'}")
+        except subprocess.TimeoutExpired:
+            print(f"[document_scraper] Playwright timed out after 120s")
+        except json.JSONDecodeError as e:
+            print(f"[document_scraper] Failed to parse Playwright output: {e}")
         except Exception as e:
-            print(f"Playwright scraper failed: {e}")
+            print(f"[document_scraper] Playwright scraper exception: {type(e).__name__}: {e}")
+    
+    print("[document_scraper] Falling back to requests-based scraping")
     
     # Fallback to requests-based scraping
     return extract_with_requests(dsn)
