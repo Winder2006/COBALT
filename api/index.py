@@ -53,25 +53,49 @@ def scrape_dnr_site(dsn):
     
     if browserless_key:
         try:
+            # Use /content endpoint to get fully rendered HTML
             api_url = f"https://chrome.browserless.io/content?token={browserless_key}"
             payload = {
                 "url": url,
-                "waitFor": 5000,
-                "gotoOptions": {"waitUntil": "networkidle2"}
+                "waitFor": 8000,
+                "gotoOptions": {
+                    "waitUntil": "networkidle0",
+                    "timeout": 45000
+                }
             }
-            resp = requests.post(api_url, json=payload, timeout=60)
+            
+            resp = requests.post(api_url, json=payload, timeout=90, headers={"Content-Type": "application/json"})
+            
             if resp.status_code == 200:
                 html = resp.text
                 soup = BeautifulSoup(html, 'html.parser')
                 
-                # Extract from rendered page
-                inputs = soup.find_all('input', {'class': 'form-control'})
-                values = [inp.get('value', '').strip() for inp in inputs]
+                # Extract from rendered page - get all input values
+                inputs = soup.find_all('input', class_='form-control')
+                values = []
+                for inp in inputs:
+                    val = inp.get('value', '').strip()
+                    values.append(val)
                 
+                # Map values by position (same as Playwright scraper)
                 field_map = {
-                    0: "activity_type", 1: "status", 2: "jurisdiction",
-                    3: "region", 4: "county", 5: "location_name",
-                    6: "address", 7: "municipality", 15: "start_date", 16: "end_date"
+                    0: "activity_type",
+                    1: "status",
+                    2: "jurisdiction",
+                    3: "region",
+                    4: "county",
+                    5: "location_name",
+                    6: "address",
+                    7: "municipality",
+                    8: "plss_description",
+                    9: "latitude",
+                    10: "longitude",
+                    11: "acres",
+                    12: "facility_id",
+                    13: "pecfa_number",
+                    14: "epa_id",
+                    15: "start_date",
+                    16: "end_date",
                 }
                 
                 for idx, key in field_map.items():
@@ -83,33 +107,40 @@ def scrape_dnr_site(dsn):
                 header_match = re.search(r'(\d{2}-\d{2}-\d+)\s+([A-Z][A-Z0-9\s\'\-\.]+)', page_text)
                 if header_match:
                     site_info["activity_number"] = header_match.group(1)
-                    if site_info["location_name"] == "Not available":
+                    # Use header name if location_name looks like a placeholder
+                    if site_info["location_name"] in ["Not available", "Location Name", ""]:
                         site_info["location_name"] = header_match.group(2).strip()
                 
                 # Risk flags
-                risk_flags["status_label"] = site_info.get("status", "UNKNOWN").upper()
+                status = site_info.get("status", "").upper()
+                risk_flags["status_label"] = status if status else "UNKNOWN"
+                
                 if site_info.get("activity_type", "").upper() == "LUST":
                     risk_flags["petroleum"] = True
                 if "pfas" in page_text.lower():
                     risk_flags["pfas"] = True
+                if any(m in page_text.lower() for m in ['arsenic', 'lead', 'mercury']):
+                    risk_flags["heavy_metals"] = True
                 
                 # Documents
-                for link in soup.find_all('a', href=re.compile(r'download-document|docSeqNo')):
+                for link in soup.find_all('a', href=True):
                     href = link.get('href', '')
-                    if href:
+                    if 'download-document' in href or 'docSeqNo' in href:
                         if not href.startswith('http'):
                             href = f"https://apps.dnr.wi.gov{href}"
                         seq_match = re.search(r'docSeqNo=(\d+)', href)
-                        seq_no = seq_match.group(1) if seq_match else str(len(documents))
-                        documents.append({
-                            "id": len(documents),
-                            "download_url": href,
-                            "category": "Site File",
-                            "name": f"Site File (ID: {seq_no})",
-                        })
+                        if seq_match:
+                            seq_no = seq_match.group(1)
+                            documents.append({
+                                "id": len(documents),
+                                "download_url": href,
+                                "category": "Site File",
+                                "name": f"Site File (ID: {seq_no})",
+                            })
                 
                 summary = f"{site_info.get('location_name', 'Site')} - {site_info.get('status', 'Unknown')}"
                 return site_info, risk_flags, documents, summary
+                
         except Exception as e:
             print(f"Browserless error: {e}")
     
