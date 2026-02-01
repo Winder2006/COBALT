@@ -75,23 +75,6 @@ def extract_site_and_documents(dsn: str) -> dict:
         except Exception as e:
             print(f"[document_scraper] Playwright scraper exception: {type(e).__name__}: {e}")
     
-    print("[document_scraper] Playwright not available, trying Browserless API...")
-    
-    # Try Browserless.io API (cloud browser)
-    try:
-        from browserless_scraper import scrape_with_browserless
-        import os
-        if os.environ.get("BROWSERLESS_API_KEY"):
-            print("[document_scraper] Using Browserless.io API")
-            result = scrape_with_browserless(dsn)
-            if not result.get("error") or "API key" not in str(result.get("error", "")):
-                return result
-            print(f"[document_scraper] Browserless failed: {result.get('error')}")
-    except ImportError:
-        print("[document_scraper] browserless_scraper not available")
-    except Exception as e:
-        print(f"[document_scraper] Browserless error: {e}")
-    
     print("[document_scraper] Falling back to basic requests scraping")
     
     # Final fallback to requests-based scraping (limited data)

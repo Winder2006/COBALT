@@ -600,7 +600,7 @@ investigations might help. Always recommend professional Phase I/II ESA review f
 if __name__ == "__main__":
     # Check if we're in production (Railway/Render) or local development
     is_production = os.environ.get("RAILWAY_ENVIRONMENT") or os.environ.get("RENDER") or os.environ.get("PORT")
-    debug_mode = not is_production and os.environ.get("FLASK_DEBUG", "true").lower() == "true"
+    debug_mode = False  # Disable debug mode to prevent auto-reloader issues with Playwright
     port = int(os.environ.get("PORT", 5000))
     
     print(f"=" * 50)
